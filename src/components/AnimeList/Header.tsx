@@ -1,7 +1,7 @@
 import Link from "next/link"
 
 interface listProps {
-    title: any,
+    title: string,
     linkHref: string,
     linkTitle: string,
 }
