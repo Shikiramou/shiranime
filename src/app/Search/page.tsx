@@ -8,7 +8,9 @@ import { useState, useEffect, useRef, useCallback } from "react";
 interface AnimeItem {
   mal_id: number;
   title: string;
-  year?: number;
+  year: number;
+  id: number;
+  status: string;
   images: {
     webp: {
       image_url: string;
