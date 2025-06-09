@@ -1,5 +1,5 @@
-
 import Link from "next/link";
+import Image from "next/image";
 
 interface AnimeData {
   mal_id: number;
@@ -14,27 +14,16 @@ interface AnimeData {
   };
 }
 
-interface AnimeListProps {
-  title?: string;
-  id?: number;
-  images?: string;
-  year?: number;
-  data?: AnimeData[];
-  limit?: number;
-  api: any;
+interface ApiResponse {
+  data: AnimeData[];
 }
 
-const AnimeList: React.FC<AnimeListProps> =  ({ 
-  title, 
-  images, 
-  year, 
-  id, 
-  data,
-  limit = 6,
-  api
-}) => {
-    
-    data = api.data;
+interface AnimeListProps {
+  api: ApiResponse;
+}
+
+const AnimeList: React.FC<AnimeListProps> = ({ api }) => {
+  const data = api.data;
 
   return (
     <>
@@ -66,9 +55,11 @@ const AnimeList: React.FC<AnimeListProps> =  ({
                     </svg>
                   </div>
                 
-                  <img
+                  <Image
                     src={item.images.webp.image_url}
                     alt={item.title}
+                    width={200}
+                    height={300}
                     className="w-full h-auto rounded-lg hover:scale-105"
                   />
                 </div>
@@ -78,14 +69,14 @@ const AnimeList: React.FC<AnimeListProps> =  ({
                 <p className="ml-2 text-sm text-neutral-500 font-bold">
                   {item.year || "N/A"}
                 </p>
-            
               </Link>
             </div>
           ))}
         </div>
       ) : (
         <div className="w-full">
-          <Link href={`/${id}`} className="group">
+          <Link href="/" className="group">
+            No data available
           </Link>
         </div>
       )}
