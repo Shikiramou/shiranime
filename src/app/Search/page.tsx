@@ -112,7 +112,7 @@ export default function Page() {
 
   return (
     <div className="xl:max-w-6/5 mt-6 mx-auto px-4">
-      <Header title="Search page" linkHref="" linkTitle=""/>
+      <Header title="Search page" linkHref={""} linkTitle={""}/>
       <div className="relative flex items-center max-w-2xl mx-auto">
         <input
           type="text"

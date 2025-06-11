@@ -6,7 +6,6 @@ interface AnimeData {
   title: string;
   year: number;
   id: number;
-  status: string;
   images: {
     webp: {
       image_url: string;
@@ -23,13 +22,20 @@ interface AnimeListProps {
 }
 
 const AnimeList: React.FC<AnimeListProps> = ({ api }) => {
-  const data = api.data;
+  // Remove duplicate mal_id entries
+  const uniqueData = api?.data?.reduce((acc: AnimeData[], current: AnimeData) => {
+    const exists = acc.find(item => item.mal_id === current.mal_id);
+    if (!exists) {
+      return acc.concat([current]);
+    }
+    return acc;
+  }, []);
 
   return (
     <>
-      {data ? (
-        <div className="grid grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-5 w-full xl:max-w-5/6 mx-auto justify-items-center">
-          {data.map((item) => (
+      {uniqueData.length > 0 ? (
+        <div className="grid grid-cols-3 md:grid-cols-6 gap-5 w-full xl:max-w-5/6 mx-auto justify-items-center">
+          {uniqueData.map((item, index) => (
             <div key={item.mal_id} className="w-full">
               <Link href={`/${item.mal_id}`} className="group">
                 <div className="relative w-full h-auto mx-auto overflow-hidden rounded-lg">
@@ -61,6 +67,7 @@ const AnimeList: React.FC<AnimeListProps> = ({ api }) => {
                     width={200}
                     height={300}
                     className="w-full h-auto rounded-lg hover:scale-105"
+                    priority={index <= 6}
                   />
                 </div>
                 <h3 className="ml-2 mt-2 whitespace-nowrap font-semibold overflow-hidden text-neutral-300 text-ellipsis text-sm">
