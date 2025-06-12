@@ -21,7 +21,6 @@ interface AnimeItem {
 export default function Page() {
   const [animeList, setAnimeList] = useState<AnimeItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const observerRef = useRef<IntersectionObserver | null>(null);
@@ -29,24 +28,18 @@ export default function Page() {
 
   const fetchNowAnime = async (pageNum: number) => {
     setIsLoading(true);
-    setError(null);
 
     try {
-      const data = await getAnimeResponse("seasons/now", `page=${pageNum}&sfw`, { next: { revalidate: 3600 }})
-        
+      const data = await getAnimeResponse(
+        "seasons/now", 
+        `page=${pageNum}&sfw`, 
+        { next: { revalidate: 3600 } }
+      );
       
-      // const response = await fetch(
-      //   `${process.env.NEXT_PUBLIC_BASE_URL}/seasons/now?page=${pageNum}&sfw`,
-      //   { next: { revalidate: 3600 } }
-      // );
-
-      
-
       setAnimeList(prev => [...prev, ...(data.data || [])]);
       setHasMore(data.pagination?.has_next_page || false);
     } catch (err) {
       console.error("Fetch error:", err);
-      setError(err instanceof Error ? err.message : "Failed to fetch data");
     } finally {
       setIsLoading(false);
     }
@@ -85,37 +78,35 @@ export default function Page() {
   }, [page, hasMore, isLoading]);
 
   return (
-      <>
+    <>
       <Header title="Ongoing Anime" linkHref="" linkTitle="" />
-    <div className="xl:max-w-6/5 mt-2 mx-auto px-4">
-      
-      
-
-      {isLoading && animeList.length === 0 ? (
-        <div className="mt-8 text-center text-gray-300">
-          Loading ongoing anime...
-        </div>
-      ) : (
-        <>
-          <AnimeList api={{ data: animeList }} />
-          <div ref={loadMoreRef} className="h-10">
-            {isLoading && (
-              <div className="text-center py-4 text-gray-400">
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                  className="w-5 h-5 border-2 border-yellow-600 border-t-transparent rounded-full inline-block"
-                />
-              </div>
-            )}
-            {!hasMore && animeList.length > 0 && (
-              <div className="text-center  text-gray-400">
-                No more ongoing anime
-              </div>
-            )}
+      <div className="xl:max-w-6/5 mt-2 mx-auto px-4">
+        {isLoading && animeList.length === 0 ? (
+          <div className="mt-8 text-center text-gray-300">
+            Loading ongoing anime...
           </div>
-        </>
-      )}
-    </div></>
+        ) : (
+          <>
+            <AnimeList api={{ data: animeList }} />
+            <div ref={loadMoreRef} className="h-10">
+              {isLoading && (
+                <div className="text-center py-4 text-gray-400">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    className="w-5 h-5 border-2 border-yellow-600 border-t-transparent rounded-full inline-block"
+                  />
+                </div>
+              )}
+              {!hasMore && animeList.length > 0 && (
+                <div className="text-center text-gray-400">
+                  No more ongoing anime
+                </div>
+              )}
+            </div>
+          </>
+        )}
+      </div>
+    </>
   );
 }
