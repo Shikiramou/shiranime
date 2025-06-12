@@ -232,7 +232,7 @@ export default function SearchPage() {
       {showScrollButton && (
         <button
           onClick={scrollToTop}
-          className="fixed z-50 bottom-6 right-6 bg-yellow-400 hover:bg-yellow-500 text-gray-900 p-3 rounded-full shadow-lg transition-all"
+          className="fixed z-50 bottom-6 right-6 bg-yellow-400 hover:bg-yellow-500 text-gray-900 p-3 rounded-full shadow-lg transition-all cursor-pointer"
           aria-label="Back to top"
         >
           <FaArrowUp className="w-5 h-5" />
