@@ -85,14 +85,11 @@ export default function Page() {
   }, [page, hasMore, isLoading]);
 
   return (
-    <div className="xl:max-w-6/5 mt-6 mx-auto px-4">
+      <>
       <Header title="Ongoing Anime" linkHref="" linkTitle="" />
+    <div className="xl:max-w-6/5 mt-2 mx-auto px-4">
       
-      {error && (
-        <div className="mt-4 text-red-400 text-center">
-          {error}
-        </div>
-      )}
+      
 
       {isLoading && animeList.length === 0 ? (
         <div className="mt-8 text-center text-gray-300">
@@ -119,6 +116,6 @@ export default function Page() {
           </div>
         </>
       )}
-    </div>
+    </div></>
   );
 }

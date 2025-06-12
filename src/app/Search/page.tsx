@@ -4,13 +4,14 @@ import AnimeList from "@/components/AnimeList";
 import Header from "@/components/AnimeList/Header";
 import { motion } from "framer-motion";
 import { useState, useEffect, useRef, useCallback } from "react";
+import { getAnimeResponse } from "../libs/api-libs";
+import { FaArrowUp } from "react-icons/fa";
 
 interface AnimeItem {
   mal_id: number;
   title: string;
   year: number;
   id: number;
-  status: string;
   images: {
     webp: {
       image_url: string;
@@ -18,132 +19,160 @@ interface AnimeItem {
   };
 }
 
-export default function Page() {
+export default function SearchPage() {
+  // State management
   const [searchResult, setSearchResults] = useState<AnimeItem[]>([]);
   const [query, setQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
-  const loadMoreRef = useRef<HTMLDivElement>(null);
+  const [hasMore, setHasMore] = useState(false);
+  const [showScrollButton, setShowScrollButton] = useState(false);
 
+  // Refs
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+
+  // Load saved state from sessionStorage
+  useEffect(() => {
+    const savedState = sessionStorage.getItem('animeSearchState');
+    if (savedState) {
+      const { query, results, page } = JSON.parse(savedState);
+      setQuery(query);
+      setSearchResults(results);
+      setPage(page);
+    }
+
+    const handleScroll = () => {
+      setShowScrollButton(window.scrollY > 300);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Fetch anime data
   const fetchResults = useCallback(async (keyword: string, pageNum: number = 1, isLoadMore: boolean = false) => {
     if (!keyword.trim()) {
       setSearchResults([]);
       setHasMore(false);
       return;
     }
-    
+
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/anime?q=${encodeURIComponent(keyword)}&sfw&page=${pageNum}`
+      const data = await getAnimeResponse(
+        "anime", 
+        `q=${encodeURIComponent(keyword)}&sfw&page=${pageNum}`,
+        { next: { revalidate: 3600 }}
       );
 
-      if (!response.ok) throw new Error(`Failed to fetch: ${response.status}`);
-      const data = await response.json();
-      
-      if (isLoadMore) {
-        setSearchResults(prev => [...prev, ...(data.data || [])]);
-      } else {
-        setSearchResults(data.data || []);
-      }
-      
-      // Check if there's more data available
+      const newResults = data.data || [];
       setHasMore(data.pagination?.has_next_page || false);
+
+      if (isLoadMore) {
+        setSearchResults(prev => [...prev, ...newResults]);
+      } else {
+        setSearchResults(newResults);
+      }
+
+      // Save search state
+      sessionStorage.setItem('animeSearchState', JSON.stringify({
+        query: keyword,
+        results: isLoadMore ? [...searchResult, ...newResults] : newResults,
+        page: pageNum
+      }));
     } catch (err) {
       console.error("Fetch error:", err);
       setError(err instanceof Error ? err.message : "Failed to fetch data");
-      if (!isLoadMore) {
-        setSearchResults([]);
-      }
+      if (!isLoadMore) setSearchResults([]);
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [searchResult]);
 
-  // Handle initial search and page changes
-  useEffect(() => {
-    if (timerRef.current) clearTimeout(timerRef.current);
-
-    timerRef.current = setTimeout(() => {
-      setPage(1); // Reset to first page when query changes
+  // Handle search submission
+  const handleSearch = () => {
+    if (query.trim()) {
+      setPage(1);
       fetchResults(query, 1, false);
-    }, 300);
+    }
+  };
 
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-    };
-  }, [query, fetchResults]);
+  // Handle Enter key press
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') handleSearch();
+  };
 
-  // Handle infinite scroll
+  // Infinite scroll setup
   useEffect(() => {
     if (!hasMore || isLoading) return;
 
-    const options = {
-      root: null,
-      rootMargin: "20px",
-      threshold: 1.0
-    };
-
-    observerRef.current = new IntersectionObserver((entries) => {
-      const [entry] = entries;
-      if (entry.isIntersecting) {
-        const nextPage = page + 1;
-        setPage(nextPage);
-        fetchResults(query, nextPage, true);
-      }
-    }, options);
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          const nextPage = page + 1;
+          setPage(nextPage);
+          fetchResults(query, nextPage, true);
+        }
+      },
+      { threshold: 1.0 }
+    );
 
     if (loadMoreRef.current) {
       observerRef.current.observe(loadMoreRef.current);
     }
 
     return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
+      observerRef.current?.disconnect();
     };
   }, [query, page, hasMore, isLoading, fetchResults]);
 
+  // Scroll to top function
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
-    <div className="xl:max-w-6/5 mt-6 mx-auto px-4">
-      <Header title="Search page" linkHref={""} linkTitle={""}/>
-      <div className="relative flex items-center max-w-2xl mx-auto">
+    <>
+    <div className="mt-4">
+      <Header title="Search Anime" linkHref="" linkTitle=""  />
+      </div>
+    <div className="xl:max-w-6/5 mx-auto px-4 pb-6 relative min-h-screen">
+      
+      {/* Search Input */}
+      <div className="flex items-center w-full xl:max-w-3/6 mx-auto mb-8">
         <input
           type="text"
           placeholder="Search anime..."
-          className="bg-[rgba(255,255,255,.1)] py-2 px-5 w-full h-12 focus:outline-none rounded-l-md text-white placeholder-gray-300"
-          required
+          className="flex-1 bg-gray-800 text-white p-3 rounded-l-lg focus:outline-none "
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={handleKeyDown}
           aria-label="Search anime"
         />
         <button
-          className={`bg-[#ece48b] h-12 px-5 rounded-r-md hover:bg-[#e0d874] transition-colors duration-200 flex items-center justify-center ${
-            isLoading ? "pointer-events-none opacity-75" : ""
-          }`}
+          onClick={handleSearch}
           disabled={isLoading}
-          aria-label="Search button"
+          className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 p-3 rounded-r-lg transition-colors disabled:opacity-70"
+          aria-label="Search"
         >
           {isLoading ? (
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-              className="w-5 h-5 border-2 border-yellow-600 border-t-transparent rounded-full"
+              className="w-5 h-5 border-2 border-gray-900 border-t-transparent rounded-full"
             />
           ) : (
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
-              strokeWidth="3"
+              strokeWidth={2}
               stroke="currentColor"
-              className="w-5 h-5 text-[#0a0909]"
+              className="w-5 h-5"
             >
               <path
                 strokeLinecap="round"
@@ -155,43 +184,60 @@ export default function Page() {
         </button>
       </div>
 
+      {/* Error Message */}
       {error && (
-        <div className="mt-4 text-red-400 text-center">
-          {error}
+        <div className="text-red-400 text-center py-4">
+          Error: {error}
         </div>
       )}
 
-      {isLoading && !error && page === 1 && (
-        <div className="mt-8 text-center text-gray-300">
+      {/* Loading State */}
+      {isLoading && page === 1 && (
+        <div className="text-center py-8 text-gray-400">
           Searching...
         </div>
       )}
 
-      <div className="mt-8">
+      {/* Search Results */}
+      <div className="mt-4">
         {searchResult.length > 0 ? (
           <>
             <AnimeList api={{ data: searchResult }} />
-            <div ref={loadMoreRef} className="h-10">
+            
+            {/* Infinite Loader */}
+            <div ref={loadMoreRef} className="py-4">
               {isLoading && page > 1 && (
-                <div className="text-center py-4 text-gray-400">
-                  Loading more...
+                <div className="text-center text-gray-400">
+                  Loading more results...
                 </div>
               )}
               {!hasMore && searchResult.length > 0 && (
-                <div className="text-center py-4 text-gray-400">
+                <div className="text-center text-gray-400">
                   No more results
                 </div>
               )}
             </div>
           </>
-        ) : (
-          !isLoading && (
-            <div className="text-center py-10 text-gray-400">
-              {query ? "No results found" : "Type to search anime"}
-            </div>
-          )
-        )}
+        ) : null}
       </div>
-    </div>
+
+      {/* Empty State */}
+      {!query && !isLoading && searchResult.length === 0 && (
+        <div className="text-center py-12 text-gray-400">
+          Search for your favorite anime
+        </div>
+      )}
+
+      {/* Back to Top Button */}
+      {showScrollButton && (
+        <button
+          onClick={scrollToTop}
+          className="fixed z-50 bottom-6 right-6 bg-yellow-400 hover:bg-yellow-500 text-gray-900 p-3 rounded-full shadow-lg transition-all"
+          aria-label="Back to top"
+        >
+          <FaArrowUp className="w-5 h-5" />
+        </button>
+      )}
+    </div></>
   );
 }

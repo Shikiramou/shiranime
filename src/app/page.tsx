@@ -18,12 +18,15 @@ export default async function Home() {
     <>
     
     {/* Ongoing anime */}
-    <section className="w-full">
+    <section className="w-full xl:max-w-6/5">
       <Header title="Ongoing anime" linkHref="/Ongoing" linkTitle="View all" />
       <div className="flex flex-col items-center w-full px-4">
         <AnimeList api={nowAnime} />
        {/* Top anime */}
+      </div>
         <Header title="Top anime" linkHref="/Top" linkTitle="View all" />
+      <div className="flex flex-col items-center w-full px-4">
+
         <AnimeList api={topAnime} />
       </div>
     </section>
