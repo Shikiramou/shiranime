@@ -1,5 +1,5 @@
 export const getAnimeResponse = async (
-  source: string, 
+  source?: string, 
   query?: string, 
   options?: { next: { revalidate: number } }
 ) => {

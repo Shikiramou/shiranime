@@ -142,19 +142,14 @@ const NavBar = () => {
 };
 
 // Komponen dengan TypeScript
+// Komponen dengan TypeScript - Versi Diperbarui
 const NavLink: React.FC<NavLinkProps> = ({ href, icon, children }) => (
   <Link
     href={href}
-    className="flex items-center group"
-    passHref
-    legacyBehavior
+    className="flex items-center group font-medium text-gray-300 hover:text-cyan-400 transition-colors"
   >
-    <a className="flex items-center group">
-      <span className="mr-2 text-lg">{icon}</span>
-      <span className="font-medium text-gray-300 group-hover:text-cyan-400 transition-colors">
-        {children}
-      </span>
-    </a>
+    <span className="mr-2 text-lg">{icon}</span>
+    {children}
   </Link>
 );
 
@@ -164,38 +159,36 @@ const MobileNavLink: React.FC<MobileNavLinkProps> = ({
   children,
   onClick,
 }) => (
-  <Link href={href} passHref legacyBehavior>
-    <a
-      onClick={onClick}
-      className="flex items-center px-4 py-3 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors"
-    >
-      <span className="mr-3 text-xl">{icon}</span>
-      <span className="font-medium">{children}</span>
-    </a>
+  <Link
+    href={href}
+    onClick={onClick}
+    className="flex items-center px-4 py-3 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors"
+  >
+    <span className="mr-3 text-xl">{icon}</span>
+    <span className="font-medium">{children}</span>
   </Link>
 );
 
 const SearchButton: React.FC = () => (
-  <Link href="/search" passHref legacyBehavior>
-    <a
-      className="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors"
-      aria-label="Search"
+  <Link
+    href="/search"
+    className="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors"
+    aria-label="Search"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-5 w-5"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="h-5 w-5"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-        />
-      </svg>
-    </a>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+      />
+    </svg>
   </Link>
 );
 
