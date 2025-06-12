@@ -2,7 +2,7 @@ import { getAnimeResponse } from "@/app/libs/api-libs"
 
 interface PageProps {
   params: {
-    id: number
+    id: any
   }
 }
 
