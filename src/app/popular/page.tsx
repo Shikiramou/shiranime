@@ -4,7 +4,7 @@ import AnimeList from "@/components/AnimeList";
 import Header from "@/components/AnimeList/Header";
 import { motion } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
-import { getAnimeResponse } from "../libs/api-libs";
+import { getAnimeResponse } from "../../libs/api-libs";
 
 interface AnimeItem {
   mal_id: number;

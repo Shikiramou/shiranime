@@ -4,7 +4,7 @@ import AnimeList from "@/components/AnimeList";
 import Header from "@/components/AnimeList/Header";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
-import { getAnimeResponse } from "../libs/api-libs";
+import { getAnimeResponse } from "../../libs/api-libs";
 import { FaArrowUp } from "react-icons/fa";
 
 interface AnimeItem {

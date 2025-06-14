@@ -1,6 +1,6 @@
 import AnimeList from "@/components/AnimeList";
 import Header from "@/components/AnimeList/Header";
-import { getAnimeResponse } from "./libs/api-libs";
+import { getAnimeResponse } from "../libs/api-libs";
 
 export default async function Home() {
   const nowAnime = await getAnimeResponse("seasons/now", "limit=6", { next: { revalidate: 3600 }})
