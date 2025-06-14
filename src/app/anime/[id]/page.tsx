@@ -1,14 +1,14 @@
 // app/anime/[id]/page.tsx
 import { getAnimeResponse } from "@/libs/api-libs";
 
-interface pagePropss {
+interface PageProps {
 params: {
   id: string
 }
 }
 
 
-export default async function Page({ params }: pagePropss) {
+export default async function Page({ params }: PageProps) {
   const { id } = await params;
   const data = await getAnimeResponse(`anime/${id}`);
 
