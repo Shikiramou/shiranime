@@ -9,7 +9,7 @@ params: {
 
 
 export default async function Page({ params }: PageProps) {
-  const { id } = await params;
+  const id  = await params;
   const data = await getAnimeResponse(`anime/${id}`);
 
   return (
