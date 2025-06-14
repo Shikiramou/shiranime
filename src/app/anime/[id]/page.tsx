@@ -1,16 +1,16 @@
 // app/anime/[id]/page.tsx
 import { getAnimeResponse } from "@/libs/api-libs";
 
+// Perbaikan: Gunakan Promise untuk params
 interface PageProps {
-params: {
-  id: string
+  params: Promise<{
+    id: string
+  }>
 }
-}
-
 
 export default async function Page({ params }: PageProps) {
-  const id = await Promise.resolve(params.id);
-  const data = await getAnimeResponse(`anime/${id}`);
+  const resolvedParams = await params;
+  const data = await getAnimeResponse(`anime/${resolvedParams.id}`);
 
   return (
     <div className="px-2 py-3 xl:max-w-5/6 mx-auto xl:bg-[#0f0f0f] xl:border-x xl:border-[rgba(255,255,255,.08)]">
