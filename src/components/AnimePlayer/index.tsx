@@ -1,17 +1,9 @@
-"use client";
-
-import useSWR from "swr";
-import { useParams } from "next/navigation";
+// app/anime/[id]/page.tsx
 import { getAnimeResponse } from "@/libs/api-libs";
 
-const fetcher = (url: string) => getAnimeResponse(url);
-
-export default function AnimePlayer() {
-  const { id } = useParams();
-  const { data, error } = useSWR(`anime/${id}`, fetcher);
-
-  if (error) return <div>Error loading data</div>;
-  if (!data) return <div>Loading...</div>;
+export default async function Page({ params }: { params: { id: string } }) {
+  const { id } = params;
+  const data = await getAnimeResponse(`anime/${id}`);
 
   return (
     <div className="px-2 py-3 xl:max-w-5/6 mx-auto xl:bg-[#0f0f0f] xl:border-x xl:border-[rgba(255,255,255,.08)]">
@@ -22,7 +14,7 @@ export default function AnimePlayer() {
           title="YouTube video player"
           allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowFullScreen
-        ></iframe>
+        />
       </div>
     </div>
   );
