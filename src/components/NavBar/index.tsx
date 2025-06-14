@@ -30,9 +30,9 @@ const NavBar = () => {
     <>
       {/* Navbar */}
       <nav
-        className={`fixed w-full z-50 transition-all duration-300 ${
+        className={`fixed md:max-w-6/5 w-full z-50 transition-all duration-300 ${
           scrolled
-            ? "bg-gray-900/95 backdrop-blur-md py-2 shadow-xl"
+            ? "bg-gray-900/95 backdrop-blur-md py-3 shadow-xl"
             : "bg-gray-900/80 backdrop-blur-sm py-3"
         }`}
       >
@@ -47,20 +47,20 @@ const NavBar = () => {
 
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-6">
-              <NavLink href="/" icon="🏠">
+              <NavLink href="/" icon="">
                 Home
               </NavLink>
-              <NavLink href="/series" icon="📺">
+              <NavLink href="/" icon="">
                 Series
               </NavLink>
-              <NavLink href="/movie" icon="🎬">
+              <NavLink href="/" icon="">
                 Movies
               </NavLink>
-              <NavLink href="/popular" icon="🔥">
+              <NavLink href="/popular" icon="">
                 Popular
               </NavLink>
-              <NavLink href="/bookmark" icon="🔖">
-                Bookmarks
+              <NavLink href="/ongoing" icon="">
+                Ongoing
               </NavLink>
               <SearchButton />
             </div>
@@ -116,20 +116,20 @@ const NavBar = () => {
           }`}
         >
           <div className="container mx-auto px-4 pt-2 pb-4 space-y-3">
-            <MobileNavLink href="/" icon="🏠" onClick={toggleMenu}>
+            <MobileNavLink href="/" icon="" onClick={toggleMenu}>
               Home
             </MobileNavLink>
-            <MobileNavLink href="/series" icon="📺" onClick={toggleMenu}>
+            <MobileNavLink href="/" icon="" onClick={toggleMenu}>
               Series
             </MobileNavLink>
-            <MobileNavLink href="/movie" icon="🎬" onClick={toggleMenu}>
+            <MobileNavLink href="/" icon="" onClick={toggleMenu}>
               Movies
             </MobileNavLink>
-            <MobileNavLink href="/popular" icon="🔥" onClick={toggleMenu}>
+            <MobileNavLink href="/popular" icon="" onClick={toggleMenu}>
               Popular
             </MobileNavLink>
-            <MobileNavLink href="/bookmark" icon="🔖" onClick={toggleMenu}>
-              Bookmarks
+            <MobileNavLink href="/ongoing" icon="" onClick={toggleMenu}>
+              Ongoing
             </MobileNavLink>
           </div>
         </div>

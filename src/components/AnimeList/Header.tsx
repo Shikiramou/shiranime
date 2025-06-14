@@ -8,7 +8,7 @@ interface listProps {
 
 const Header: React.FC<listProps> = ({title, linkHref, linkTitle}) => {
     return (
-        <div className="w-full xl:max-w-5/6 mx-auto px-4 flex justify-between">
+        <div className="w-full md:max-w-5/6 mx-auto px-4 flex justify-between">
     <h1 className="flex items-center py-3 text-md md:text-md xl:text-lg font-semibold capitalize text-neutral-200">
       <span className="inline-block w-1 h-5 mr-2 rounded-md bg-neutral-200"></span>
           {title}

@@ -34,7 +34,7 @@ const AnimeList: React.FC<AnimeListProps> = ({ api }) => {
   return (
     <>
       {uniqueData.length > 0 ? (
-        <div className="grid grid-cols-3 md:grid-cols-6 gap-5 w-full xl:max-w-5/6 mx-auto justify-items-center">
+        <div className="grid grid-cols-3 md:grid-cols-6 gap-5 w-full md:max-w-5/6 mx-auto justify-items-center">
           {uniqueData.map((item, index) => (
             <div key={item.mal_id} className="w-full">
               <Link href={`/anime/${item.mal_id}`} className="group">
