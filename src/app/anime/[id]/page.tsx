@@ -1,10 +1,6 @@
-"use client";
-import useSWR from "swr";
-import { useParams } from "next/navigation";
-import { getAnimeResponse } from "@/libs/api-libs";
+import AnimePlayer from "@/components/AnimePlayer";
 
-const fetcher = (url: string) => getAnimeResponse(url);
-
+<<<<<<< HEAD
 export default function AnimeTrailerPage() {
   const { id } = useParams();
   const { data, error, isLoading } = useSWR(`anime/${id}`, fetcher);
@@ -57,3 +53,10 @@ export default function AnimeTrailerPage() {
     </div>
   );
 }
+=======
+export default function Page() {
+  return (
+    <AnimePlayer />
+  )
+}
+>>>>>>> a394255 (a)
