@@ -20,6 +20,6 @@ export default function Page() {
                   allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen></iframe>
     </div>
-    <h2>{data.data.title}<h2></div>
+    <h2>{data.data.title}</h2></div>
   );
 }
